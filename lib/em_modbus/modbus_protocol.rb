@@ -44,12 +44,12 @@ module EmModbus
 			if values.size > @options[:max_write_coils]
 				raise "too many words, max #{@options[:max_write_coils]}"
 			end
-			vv = values.map {|v| if v then '1' else '0' end }.pack('b*')
+			vv = [values.map {|v| if v then '1' else '0' end }.join].pack('b*')
 			send_data(create_packet(0x0f, [start_addr, values.size, vv.bytesize].pack('nnC') + vv, slave_address))
 		end
 
 		def create_packet(function_code, data, slave_address) # :nodoc:
-			[0, 0, data.size + 2, slave_address, function_code].pack('nnnCC') + data
+			[0, 0, data.bytesize + 2, slave_address, function_code].pack('nnnCC') + data
 		end
 		private :create_packet
 
